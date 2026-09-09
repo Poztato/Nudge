@@ -1,6 +1,6 @@
-# Technical evidence behind the Daymark proposal
+# Technical evidence behind the Nudge proposal
 
-Checked on 8 September 2026. These notes support the README's technical claims. Published results, arithmetic estimates, and measurements from a future Daymark build are kept distinct.
+Checked on 8 September 2026. These notes support the README's technical claims. Published results, arithmetic estimates, and measurements from a future Nudge build are kept distinct.
 
 ## Model files and runtime memory
 
@@ -26,17 +26,17 @@ KV bytes = 2 (K and V)
 4,096 tokens: 100,663,296 bytes = 96 MiB
 ```
 
-These are calculated MiniCPM cache payloads, not observed process RAM or an EmbeddingGemma memory estimate. The assistant's 2,048/4,096-token context and the embedding model's 256-token input budget are independent. Loaded weight representation, runtime buffers, cache implementation, allocator overhead, the embedding session, and the UI all contribute to actual memory use. MB means 1,000,000 bytes; MiB means 1,048,576 bytes. No total peak-RAM or tokens-per-second result has been measured for Daymark.
+These are calculated MiniCPM cache payloads, not observed process RAM or an EmbeddingGemma memory estimate. The assistant's 2,048/4,096-token context and the embedding model's 256-token input budget are independent. Loaded weight representation, runtime buffers, cache implementation, allocator overhead, the embedding session, and the UI all contribute to actual memory use. MB means 1,000,000 bytes; MiB means 1,048,576 bytes. No total peak-RAM or tokens-per-second result has been measured for Nudge.
 
-Google advertises quantized EmbeddingGemma deployments using less than 200 MB RAM on its [product page](https://deepmind.google/models/gemma/embeddinggemma/). This is not a measurement of the selected 278 MB GGUF in Daymark, so it is not used as the app's RAM budget. Likewise, accelerator-specific published latency is not transferable to this phone lineup. Benchmark separate embedding and generation sessions, then compare simultaneous residency with unloading between stages.
+Google advertises quantized EmbeddingGemma deployments using less than 200 MB RAM on its [product page](https://deepmind.google/models/gemma/embeddinggemma/). This is not a measurement of the selected 278 MB GGUF in Nudge, so it is not used as the app's RAM budget. Likewise, accelerator-specific published latency is not transferable to this phone lineup. Benchmark separate embedding and generation sessions, then compare simultaneous residency with unloading between stages.
 
 ## Interpreting the model benchmarks
 
 The README transcribes three rows from [OpenBMB's original evaluation image](https://raw.githubusercontent.com/OpenBMB/MiniCPM/main/assets/minicpm5/public_leaderboard_en.png), linked from the [model card](https://huggingface.co/openbmb/MiniCPM5-1B). The image was visually inspected. All compared columns are labelled Thinking. The README preserves the exact benchmark label “Telecom-AA”; it does not substitute a generic telecom score.
 
-The table describes publisher-reported model performance. It does not establish the quantisation, runtime, phone latency, or success rate of a Daymark deployment. MiniCPM's result varies by benchmark, so the README includes function calling and instruction following alongside its stronger Telecom-AA result.
+The table describes publisher-reported model performance. It does not establish the quantisation, runtime, phone latency, or success rate of a Nudge deployment. MiniCPM's result varies by benchmark, so the README includes function calling and instruction following alongside its stronger Telecom-AA result.
 
-The [BFCL project](https://gorilla.cs.berkeley.edu/leaderboard.html) evaluates function calling. The [tau benchmark project](https://github.com/sierra-research/tau2-bench) concerns agents interacting with tools and users in simulated domains. Neither measures student wellbeing or the usefulness of Daymark's recommendations.
+The [BFCL project](https://gorilla.cs.berkeley.edu/leaderboard.html) evaluates function calling. The [tau benchmark project](https://github.com/sierra-research/tau2-bench) concerns agents interacting with tools and users in simulated domains. Neither measures student wellbeing or the usefulness of Nudge's recommendations.
 
 Local validation must use the exact model file, runtime revision, chat template, tool adapter, and thinking mode. It should record incorrect tool selection, malformed arguments, unsupported claims, and rejected schedule proposals as well as successful examples.
 
@@ -66,7 +66,7 @@ The [ggml-org model instructions](https://huggingface.co/ggml-org/embeddinggemma
 
 [sqlite-vec](https://alexgarcia.xyz/sqlite-vec/android-ios.html) publishes mobile libraries. Integration still requires compatible native SQLite packaging; a stock Android SQLite connection should not be assumed to load arbitrary extensions. Changing the embedding model requires rebuilding existing vectors, even if two encoders happen to have the same output dimensions.
 
-Google's [published evaluation](https://huggingface.co/google/embeddinggemma-300m#benchmark-results) reports MTEB Mean Task scores at 768 dimensions: Q4_0 scores 60.62 against full precision's 61.15 on Multilingual v2, and 69.31 against 69.67 on English v2. The differences are 0.53 and 0.36 points. These are publisher results after quantisation, not a Daymark retrieval evaluation or evidence of the current overall leaderboard position. The README consequently motivates the model with its measured quality/size tradeoff rather than declaring it the universally best embedding model.
+Google's [published evaluation](https://huggingface.co/google/embeddinggemma-300m#benchmark-results) reports MTEB Mean Task scores at 768 dimensions: Q4_0 scores 60.62 against full precision's 61.15 on Multilingual v2, and 69.31 against 69.67 on English v2. The differences are 0.53 and 0.36 points. These are publisher results after quantisation, not a Nudge retrieval evaluation or evidence of the current overall leaderboard position. The README consequently motivates the model with its measured quality/size tradeoff rather than declaring it the universally best embedding model.
 
 The proposed retrieval sequence is: apply relevant date constraints, rank note passages by semantic similarity, fetch original text and dates, and provide a bounded selection to the assistant. Exact counts and time calculations come from structured queries. Deleting or editing a source note must update its embeddings.
 
@@ -80,6 +80,6 @@ The team corrected its available lineup on 8 September 2026 to Xiaomi 13T, Nothi
 - [Sony Xperia 1 II specifications](https://www.sony.co.uk/electronics/support/mobile-phones-tablets-mobile-phones/xperia-1-ii/specifications): Snapdragon 865, 8 GB; Sony also announced a [12 GB variant](https://www.sony.com.hk/press/pdf/20201016_e.pdf).
 - [Samsung Galaxy A52 launch specifications](https://news.samsung.com/in/the-galaxy-a52-a52-5g-and-a72-make-innovation-accessible-to-all) and [manufacturer catalogue](https://stg-images.samsung.com/is/content/samsung/p5/iran/smartphones/mobile-catalogue/samsung-mobile-digital-catalogue-20211122-mob.pdf): A52 has Snapdragon 720G and 4/6/8 GB variants. The [A52 5G datasheet](https://image-us.samsung.com/SamsungUS/samsungbusiness/resources/firstnet-datasheets/pdfs/Galaxy_A52_Series_Datasheet_%28FirstNet%29.pdf) lists Snapdragon 750G. The team's exact A52 variant remains to be recorded.
 
-Exact RAM variants and installed OS versions of the available units remain to be recorded. The Xiaomi 13T is the user's primary test phone. Device availability is confirmed; Daymark compatibility and performance are not yet measured.
+Exact RAM variants and installed OS versions of the available units remain to be recorded. The Xiaomi 13T is the user's primary test phone. Device availability is confirmed; Nudge compatibility and performance are not yet measured.
 
 Measure cold load, time to first token, completed-response time, peak process memory, and repeated-session behaviour. Exercise reminder delivery with the app closed, after reboot, and under the device's power-management settings. Verify offline retrieval and inference after model installation.
