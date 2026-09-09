@@ -1,4 +1,4 @@
-# Daymark by Macaroon
+# Nudge by Macaroon
 
 **Team:** Leonard Su, Dewmi Anusha, Lim Lee Khang, Tan Bo Yu  
 **Problem Statement:** Stress & Workload Manager  
@@ -19,11 +19,11 @@ Existing planners solve parts of this separately. [ClickUp](https://help.clickup
 
 ### Our Solution
 
-Daymark is a fully offline AI-powered Android personal planning app that gives you a strategy at the start of the day and checks in on you in the evening. Just like traditional planners, it has a built-in task management system with optional connections to Google Calendar or a fully localised calendar. The app is designed to monitor assignment deadlines and calendar events, while keeping track of the user's well-being and private reflections in a SQL + vector database that only the local model and the user can access.
+Nudge is a fully offline AI-powered Android personal planning app that gives you a strategy at the start of the day and checks in on you in the evening. Just like traditional planners, it has a built-in task management system with optional connections to Google Calendar or a fully localised calendar. The app is designed to monitor assignment deadlines and calendar events, while keeping track of the user's well-being and private reflections in a SQL + vector database that only the local model and the user can access.
 
 ### Core features of the product:
 
-- **Fully localised app.** Unlike the vast majority of AI-powered apps, Daymark uses a capable ~1B param model for summarising and reasoning. This keeps everything running locally, and students can build their personal history and use it to make better daily decisions without an AI subscription, an API key, or uploading their diary online.
+- **Fully localised app.** Unlike the vast majority of AI-powered apps, Nudge uses a capable ~1B param model for summarising and reasoning. This keeps everything running locally, and students can build their personal history and use it to make better daily decisions without an AI subscription, an API key, or uploading their diary online.
 - **A planner with personal context.** The assistant combines work-related tasks with preferences and regular check-ins to suggest priorities and recovery time. This AI agent works in a self-improving way, where more context gives it more information to cater to the user's preferences.
 - **A workload overview.** The agent derives and interprets workload metrics from recorded data like assignments, exercise, leisure time, deadlines, and everyday responsibilities, then visualises them by day. This makes it easy to notice accumulation across a week instead of treating each deadline as an isolated event.
 - **A private, searchable diary.** Reflections become part of a local semantic memory, allowing questions such as "What helped the last time I felt overwhelmed by group work?" to retrieve relevant entries even when their wording is different.
@@ -31,7 +31,7 @@ Daymark is a fully offline AI-powered Android personal planning app that gives y
 - **Scheduled nudges as notifications.** Daily plans and reminder times are handed to Android's scheduling system. Students can close the app and still receive a reminder to start a task or reflect on their day.
 - **An integrated task manager and calendar.** Assignments, errands, deadlines, and work blocks live in the app. Google Calendar is an optional source of existing commitments.
 
-Consider a student approaching another group-project deadline. Their diary includes an earlier entry about how a short walk and splitting the work into smaller sections helped them get started. In the proposed flow, Daymark can retrieve that entry, inspect today's commitments, suggest a suitable work block and break, and schedule the accepted reminder locally. The reflection has become useful planning context, with its original date and wording available to inspect.
+Consider a student approaching another group-project deadline. Their diary includes an earlier entry about how a short walk and splitting the work into smaller sections helped them get started. In the proposed flow, Nudge can retrieve that entry, inspect today's commitments, suggest a suitable work block and break, and schedule the accepted reminder locally. The reflection has become useful planning context, with its original date and wording available to inspect.
 
 ## 2. Ideation & Process
 
@@ -52,7 +52,7 @@ We started with the idea of a task manager that understands the person using it.
 
 | Idea                                                                | Why it was dropped                                                                                                                                                                                              |
 | :------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A full Hermes/OpenClaw-style agent                                  | The persistent memory and tool use architecture inspired the design of Daymark, but their broader capabilities exceeded the product's needs. We chose a focused application agent with a defined set of tools.  |
+| A full Hermes/OpenClaw-style agent                                  | The persistent memory and tool use architecture inspired the design of Nudge, but their broader capabilities exceeded the product's needs. We chose a focused application agent with a defined set of tools.  |
 | A larger model hosted on a team workstation                         | Avoided per-call API charges but introduced a shared hardware bottleneck, server availability concerns, and remote handling of personal information.                                                            |
 | A website with a hosted model API and Telegram/WhatsApp integration | Offered a familiar interface, but added accounts, messaging integrations, token expenditure, and abuse controls to a product intended for everyday personal use.                                                |
 | A hosted Postgres/Supabase database with vector search              | This was the early memory design. We retained the relational-plus-vector approach and moved it onto the device to remove the need for a cloud account and database service.                                     |
@@ -99,7 +99,7 @@ _Screen images and the public prototype link are pending._
 
 ## 4. What Makes It Different
 
-**The complete intelligence loop resides on the device.** Daymark combines inference, structured storage, semantic retrieval, and scheduling in one personal environment. Keeping all four local means the assistant can use sensitive context without handing that context to an inference service. A student's ability to revisit their diary or plan tomorrow is designed to remain available offline after installation.
+**The complete intelligence loop resides on the device.** Nudge combines inference, structured storage, semantic retrieval, and scheduling in one personal environment. Keeping all four local means the assistant can use sensitive context without handing that context to an inference service. A student's ability to revisit their diary or plan tomorrow is designed to remain available offline after installation.
 
 **Personal memory becomes operational.** A reflection can influence a later priority or recovery suggestion. This goes beyond saving notes next to a calendar: the assistant can retrieve an earlier experience, connect it to current commitments, and propose an action through the app's tools. The student can inspect the source and decide whether the connection is useful.
 
@@ -107,13 +107,13 @@ _Screen images and the public prototype link are pending._
 
 **The economics support daily use.** Local inference eliminates per-request model fees, and local storage removes the need to host each student's personal database. Our intention is a free core experience that students can use regularly without rationing AI credits. Growth adds computation on users' devices rather than requiring a proportionally larger inference server.
 
-**Recent compact models make this a practical product direction.** Current models provide decent tool use at roughly one billion parameters with quantised runtimes, and mobile vector search bring capabilities associated with hosted agent systems into a much smaller deployment. Daymark applies that combination to provide a sustained, private support for student workload and recovery.
+**Recent compact models make this a practical product direction.** Current models provide decent tool use at roughly one billion parameters with quantised runtimes, and mobile vector search bring capabilities associated with hosted agent systems into a much smaller deployment. Nudge applies that combination to provide a sustained, private support for student workload and recovery.
 
 ## 5. Technical Architecture & Feasibility
 
 ### Tech stack
 
-| Layer                | Proposed technology                                                                                       | Why it fits Daymark                                                                                                                 |
+| Layer                | Proposed technology                                                                                       | Why it fits Nudge                                                                                                                 |
 | :------------------- | :-------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
 | Android application  | Android APK with native integration for storage, inference, and notifications; UI toolkit to be finalised | Gives the assistant direct access to device capabilities and a persistent daily-use interface.                                      |
 | Local reasoning      | MiniCPM5-1B Q4_K_M through llama.cpp                                                                      | Compact inference with tool-calling support, keeping the model and personal context together on the device.                         |
@@ -128,7 +128,7 @@ _Screen images and the public prototype link are pending._
 
 Our starting model has approximately **1.08 billion parameters**, native XML-style tool calls, and selectable thinking and non-thinking modes. Its published Q4_K_M file is **688 MB**, compared with **2.17 GB** for F16, a roughly **68% reduction in weight-file storage**. [Model capabilities](https://huggingface.co/openbmb/MiniCPM5-1B), [published model files](https://huggingface.co/openbmb/MiniCPM5-1B-GGUF/tree/main)
 
-Tool use matters because Daymark must translate a request into operations on real records. Selected results from OpenBMB's published comparison are:
+Tool use matters because Nudge must translate a request into operations on real records. Selected results from OpenBMB's published comparison are:
 
 | Benchmark           | MiniCPM5-1B | Qwen3.5-0.8B | LFM2.5-1.2B |
 | :------------------ | ----------: | -----------: | ----------: |
@@ -138,7 +138,7 @@ Tool use matters because Daymark must translate a request into operations on rea
 
 All three are the **thinking variants** in the publisher's table. These publisher-reported scores inform model selection; validation of the Q4_K_M Android build is part of our build plan. [Original benchmark table](https://raw.githubusercontent.com/OpenBMB/MiniCPM/main/assets/minicpm5/public_leaderboard_en.png)
 
-The strong Telecom-AA result is a useful selection signal for an assistant that must coordinate conversation and tools. BFCLv4 also shows why we keep the action space focused. Daymark gives the model a small set of relevant operations, validates their arguments, and handles schedule constraints in code. Routine summaries can use non-thinking mode; its speed and quality will be measured separately.
+The strong Telecom-AA result is a useful selection signal for an assistant that must coordinate conversation and tools. BFCLv4 also shows why we keep the action space focused. Nudge gives the model a small set of relevant operations, validates their arguments, and handles schedule constraints in code. Routine summaries can use non-thinking mode; its speed and quality will be measured separately.
 
 For a request such as “Help me make tomorrow less packed,” the proposed execution path is:
 
@@ -152,7 +152,7 @@ OpenBMB provides an Android demonstration supporting MiniCPM5-1B, while llama.cp
 
 ### Memory that can grow beyond the prompt
 
-Daymark uses **hybrid relational and semantic memory**, with different responsibilities for each layer.
+Nudge uses **hybrid relational and semantic memory**, with different responsibilities for each layer.
 
 SQLite answers questions such as “How many assignments are due this week?” from exact records. Derived daily metrics support a longitudinal view without asking a language model to invent scores or perform the bookkeeping. Notes preserve the student's explanation of those days, and vector search retrieves relevant passages by meaning. Together, these give the assistant both a factual timeline and the context behind it.
 
@@ -160,7 +160,7 @@ This also makes the workload view explainable. Two hours of classes plus 135 min
 
 Our proposed embedding model is **Google's EmbeddingGemma-300m**, designed for multilingual retrieval across more than 100 languages. That makes it a better fit for a student diary that may contain several languages than the earlier English-focused MiniLM candidate. We propose the **QAT Q4_0 GGUF** conversion published by ggml-org, allowing both models to use llama.cpp within the Android app. sqlite-vec keeps vector search inside SQLite. [Embedding model](https://huggingface.co/google/embeddinggemma-300m), [GGUF runtime instructions](https://huggingface.co/ggml-org/embeddinggemma-300M-qat-q4_0-GGUF), [sqlite-vec mobile support](https://alexgarcia.xyz/sqlite-vec/android-ios.html)
 
-Quantisation-aware training makes this a useful mobile candidate: Google's published Q4_0 results score **60.62 versus 61.15** for full precision on MTEB Multilingual v2, and **69.31 versus 69.67** on MTEB English v2 (Mean Task, 768 dimensions). The reported losses are just **0.53 and 0.36 points** respectively. These results support the compact deployment choice; retrieval quality on student reflections will be tested in Daymark. [Published evaluation](https://huggingface.co/google/embeddinggemma-300m#benchmark-results)
+Quantisation-aware training makes this a useful mobile candidate: Google's published Q4_0 results score **60.62 versus 61.15** for full precision on MTEB Multilingual v2, and **69.31 versus 69.67** on MTEB English v2 (Mean Task, 768 dimensions). The reported losses are just **0.53 and 0.36 points** respectively. These results support the compact deployment choice; retrieval quality on student reflections will be tested in Nudge. [Published evaluation](https://huggingface.co/google/embeddinggemma-300m#benchmark-results)
 
 We will cap each embedding input at **256 tokens**, reserving space within that budget for the retrieval prefix and special tokens. Longer diary entries will be split into passages with their original dates and source IDs. Short inputs bound the work per passage; saving only new or edited passage embeddings avoids reprocessing the whole archive. The model supports up to **2,048 input tokens**, but a larger limit is unnecessary for this initial passage-based design. Actual indexing latency depends on the phone, runtime, and number of chunks.
 
