@@ -1,13 +1,13 @@
 # Technical evidence behind the Nudge proposal
 
-Checked on 8 September 2026. These notes support the README's technical claims. Published results, arithmetic estimates, and measurements from a future Nudge build are kept distinct.
+Model and device sources checked on 8 September 2026. Metric sources and examples added on 10 September 2026. This document supports the findings in the README with source links, calculations, and integration details.
 
 ## Model files and runtime memory
 
 The [official GGUF file listing](https://huggingface.co/openbmb/MiniCPM5-1B-GGUF/tree/main) shows MiniCPM5-1B-Q4_K_M.gguf at 688 MB and the F16 file at 2.17 GB. These are the site's rounded decimal file sizes.
 
 - Weight-file reduction: `1 - 688 / 2170 = 0.682949...`, approximately 68%.
-- Proposed embedding artifact: ggml-org's [EmbeddingGemma-300M-qat-Q4_0.gguf](https://huggingface.co/ggml-org/embeddinggemma-300M-qat-q4_0-GGUF/tree/main) is listed at 278 MB. This is a GGUF conversion of Google's quantisation-aware-trained model, not the unquantized checkpoint linked in the original proposal.
+- Selected embedding artifact: ggml-org's [EmbeddingGemma-300M-qat-Q4_0.gguf](https://huggingface.co/ggml-org/embeddinggemma-300M-qat-q4_0-GGUF/tree/main) is listed at 278 MB. This is a GGUF conversion of Google's quantisation-aware-trained model.
 - Combined model-file size: `688 + 278 = 966 MB`. This excludes additional tokenizer assets where needed, APK/runtime libraries, stored records, and temporary download space. Compared with the earlier 23 MB MiniLM artifact, the model-file budget increases by 255 MB.
 
 The [OpenBMB demonstration](https://github.com/OpenBMB/MiniCPM-V-Apps#hardware-requirements) recommends at least 4 GB of device RAM for MiniCPM5-1B. Its table rounds the model download to approximately 0.5 GB; the README uses the specific artifact's 688 MB listing for storage estimates.
@@ -32,7 +32,7 @@ Google advertises quantized EmbeddingGemma deployments using less than 200 MB RA
 
 ## Interpreting the model benchmarks
 
-The README transcribes three rows from [OpenBMB's original evaluation image](https://raw.githubusercontent.com/OpenBMB/MiniCPM/main/assets/minicpm5/public_leaderboard_en.png), linked from the [model card](https://huggingface.co/openbmb/MiniCPM5-1B). The image was visually inspected. All compared columns are labelled Thinking. The README preserves the exact benchmark label “Telecom-AA”; it does not substitute a generic telecom score.
+The README transcribes three rows from [OpenBMB's original evaluation image](https://raw.githubusercontent.com/OpenBMB/MiniCPM/main/assets/minicpm5/public_leaderboard_en.png), linked from the [model card](https://huggingface.co/openbmb/MiniCPM5-1B). The image was visually inspected on the model-source review date. All compared columns are labelled Thinking, and the first selected row is labelled “Telecom-AA”.
 
 The table describes publisher-reported model performance. It does not establish the quantisation, runtime, phone latency, or success rate of a Nudge deployment. MiniCPM's result varies by benchmark, so the README includes function calling and instruction following alongside its stronger Telecom-AA result.
 
@@ -44,7 +44,7 @@ Local validation must use the exact model file, runtime revision, chat template,
 
 [EmbeddingGemma-300m](https://huggingface.co/google/embeddinggemma-300m) replaces the earlier MiniLM candidate. Google describes it as a roughly 300M-parameter multilingual embedding model, trained across more than 100 languages, with a 2,048-token maximum input. Its default output has 768 dimensions; Matryoshka Representation Learning permits 512, 256, or 128 dimensions with re-normalisation. We use the full output as the initial baseline, with smaller vectors as an evaluation option.
 
-The user confirmed **256 tokens per chunk**, not 256k tokens. The proposed implementation reserves prefix and special-token space within a 256-token embedding-input budget. Split longer entries at suitable passage boundaries and preserve their source IDs and dates. This bounds input work per passage but does not guarantee a particular latency: more chunks still mean more total work, and very short fragments may lose context. Embed new or changed passages once and reuse their vectors for later searches.
+Nudge uses a **256-token embedding-input budget**, including prefixes and special tokens. Longer entries are split at passage boundaries with their source IDs and dates preserved. Total indexing work depends on both passage length and chunk count. New or changed passages are embedded once, and later searches reuse their vectors.
 
 For float32 stored vectors:
 
@@ -72,7 +72,7 @@ The proposed retrieval sequence is: apply relevant date constraints, rank note p
 
 ## Device test scope
 
-The team corrected its available lineup on 8 September 2026 to Xiaomi 13T, Nothing Phone (1), Samsung Galaxy S23 Ultra, Sony Xperia 1 II, and Samsung Galaxy A52. This supersedes the earlier Phone (2)/S25 Ultra list. The README's chipset and RAM figures are manufacturer specifications:
+The available lineup is Xiaomi 13T, Nothing Phone (1), Samsung Galaxy S23 Ultra, Sony Xperia 1 II, and Samsung Galaxy A52. The README summarises their test roles. These manufacturer specifications provide the detailed hardware references:
 
 - [Xiaomi 13T](https://www.mi.com/mx/product/xiaomi-13t/specs/).
 - [Nothing Phone (1)](https://ae.nothing.tech/en/pages/phone-1): Snapdragon 778G+, 8/12 GB RAM.
@@ -83,3 +83,84 @@ The team corrected its available lineup on 8 September 2026 to Xiaomi 13T, Nothi
 Exact RAM variants and installed OS versions of the available units remain to be recorded. The Xiaomi 13T is the user's primary test phone. Device availability is confirmed; Nudge compatibility and performance are not yet measured.
 
 Measure cold load, time to first token, completed-response time, peak process memory, and repeated-session behaviour. Exercise reminder delivery with the app closed, after reboot, and under the device's power-management settings. Verify offline retrieval and inference after model installation.
+
+## Metric definitions and sources
+
+The README uses five separate indicators. Application code calculates them from saved records. The commitment, deadline, exercise-goal, and sleep-difference formulas are Nudge's planning calculations. WHO-5 uses the published instrument and scoring method.
+
+### Commitment utilisation
+
+```text
+utilisation (%) = non-overlapping committed minutes / daily budget minutes * 100
+
+Example:
+2 hours of classes + 135 minutes of planned work = 255 minutes
+6-hour budget = 360 minutes
+255 / 360 * 100 = 70.8333...%, displayed as about 71%
+```
+
+The budget covers the same commitments counted in the numerator: classes, study, paid work, and other scheduled responsibilities. Merge overlapping intervals for the time total and retain the conflicting events for display. A missing budget displays a setup prompt; a zero budget displays "No goal set". Values above 100% remain visible.
+
+### Deadline pressure
+
+```text
+pressure = estimated remaining work hours / available work hours before the deadline
+
+Example:
+8 remaining hours / 6 available hours = 1.33
+Estimated time shortfall = 8 - 6 = 2 hours
+
+Range example:
+5-10 remaining hours / 6 available hours = 0.83-1.67
+```
+
+Available work time is calculated within the student's daily commitment budget and free calendar windows, up to the deadline. Fixed commitments consume capacity. Shared time is allocated across competing assignments; a task's own reserved work blocks count towards the time available to that task. This avoids counting one free block as fully available to several assignments.
+
+Store the estimate's lower and upper bounds and any open-ended state. An open-ended bucket such as "over 10 hours" stays open-ended until refined. Missing deadlines or estimates display the required field. Outstanding work with zero available hours displays "No available work time". Completed and cancelled assignments leave the calculation.
+
+### Exercise-goal completion
+
+```text
+goal completion (%) = reported exercise minutes in the week / weekly target minutes * 100
+
+Example:
+90 reported minutes / 150 target minutes * 100 = 60%
+```
+
+The target is chosen by the student. Exercise scheduled in the calendar remains planned until completion is reported. Each report has a date and a duration or duration range. Weekly totals add the reports for that week and show the number of recorded days. An explicitly reported zero is a recorded day; an unanswered day stays missing. A zero target displays "No goal set". This indicator describes progress towards the user's time goal.
+
+### Sleep relative to target
+
+```text
+sleep difference (hours) = reported duration - personal target
+
+Example:
+6.5 reported hours - 8 target hours = -1.5 hours
+
+Range example:
+6-7 reported hours - 8 target hours = -2 to -1 hours
+```
+
+The [CDC's age-based guidance](https://www.cdc.gov/sleep/about/index.html) lists 8-10 hours for ages 13-17, at least 7 hours for ages 18-60, 7-9 hours for ages 61-64, and 7-8 hours for ages 65 and older. Setup presents the relevant guidance when an age range is supplied, then saves the student's chosen target. A skipped age question still allows a personal target.
+
+Duration belongs to the selected night. Mood, energy, and feelings of restfulness stay separate from this duration calculation. The CDC also describes sleep quality in terms of uninterrupted and refreshing sleep.
+
+### WHO-5 scoring and timing
+
+The [WHO-5 publication](https://www.who.int/publications/m/item/WHO-UCN-MSD-MHE-2024.01) provides five statements about well-being over the past two weeks, each with six response options. Responses run from 0 to 5. The [WHO scoring description](https://www.who.int/data/gho/indicator-metadata-registry/imr-details/10282) specifies the sum and multiplication by four.
+
+```text
+raw score = sum of five item responses, each 0-5
+display score = raw score * 4
+raw range = 0-25
+display range = 0-100
+
+Example:
+Responses: 3, 2, 4, 3, 3
+Raw score: 15
+Display score: 15 * 4 = 60
+```
+
+Nudge offers WHO-5 every two weeks using the original statements and response options. It stores all five responses, the instrument version, the reporting period, and the assessment date. It calculates the score after all five responses are supplied. The weekly review shows the latest completed score, its date, and the change from the previous completed assessment. Scores are shown as well-being observations alongside workload and reflection.
+
+The Tuesday, Friday, and Sunday check-ins collect task progress, optional mood and energy ratings, dated exercise and sleep reports, and free text. These records support the weekly review separately from the two-week WHO-5 assessments. The three-day reminder schedule and every-two-week assessment schedule are Nudge's product choices.
