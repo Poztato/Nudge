@@ -84,6 +84,14 @@ This concept sketch shows our starting concern: academic progress can take atten
 
 The early design separated raw records, calculated metrics, and personal notes. We kept those roles and moved the hosted Hermes/Supabase design shown here onto Android.
 
+![High level architecture of the final system](docs/images/high-level-architecture.jpg)
+
+The final architecture of the system shows a simple concept where aspects like tasks, sleep, and exercise and derived into metrics and logged into SQLite. Daily written reflections are stored in a vector database. These records will be retrieved by code and processed by MiniCPM5-1B, which will finally be sent to the user via a plan + explanation + reminder as an Android notification. 
+
+#### **Final Mindmap, Problem Tree, and Chosen Concept**
+> This board contains the collection of idea brainstorming, rejections and explanations, as well as the final architecture after mentor consultation.  
+> [Open Figma Board →](https://www.figma.com/board/bJGluDSU0T1qYWG7pH7Cy3/AI-Task-Manager-%E2%80%94-Ideation-Journey?node-id=0-1&p=f&t=Rpq8sJP5aY1IzzyN-0)
+
 ### 2.3 Mentor Consultation
 
 | Date | Mentor | Feedback Received | What Was Changed |
@@ -105,14 +113,17 @@ The design uses a yellow duck mascot, rounded cards, and a shared bottom navigat
 
 | Screen | What the mockup shows |
 | :--- | :--- |
-| [1. Sign Up](Nudge%20prototype/1.png) | A welcome screen with a language selector, name, email, and password fields, a Next button, and a Sign in link, along with an option to continue offline. |
-| [2. Progress](Nudge%20prototype/2.png) | A dashboard card with a pie chart displaying placeholders for the user's well-being metrics, followed by a link to Today's Plan. |
-| [3. To-do List](Nudge%20prototype/3.png) | Assignments and meetings with checked and unchecked states and a menu beside each item. |
-| [4. Metrics](Nudge%20prototype/4.png) | Week, Month, and All Time controls, a date range, a short weekly summary, an overview line chart, and a category breakdown. |
-| [5. Today's Plan](Nudge%20prototype/5.png) | A timeline containing meetings, study, a meal break, exercise, and wind-down time. Below it are a short planning nudge and an Evening Reflection link. |
-| [6. Reflection](Nudge%20prototype/6.png) | Five mood faces, a yes/no question about completing today's plan, a free-text reflection field, and a Submit button. |
-| [7. Add plans](Nudge%20prototype/7.png) | Fields for a title, estimated workload, deadline, and details, followed by an Add button. Workload choices are Easy (less than one week), Medium (less than one month), and Hard (more than one month). |
-| [8. Ask Nudge](Nudge%20prototype/8.png) | An example conversation about feeling overwhelmed, choosing a first task, and rearranging the evening, with suggested prompts and a message input. |
+| [1. Sign Up](nudge-prototype/1.png) | A welcome screen with a language selector, name, email, and password fields, a Next button, and a Sign in link, along with an option to continue offline. |
+| [2. Onboarding Survey](nudge-prototype/2.png) | A survey for new users to enter their initial preferences so the app can be personalised to their lifestyle. |
+| [3. Progress](nudge-prototype/3.png) | A dashboard card with a pie chart displaying placeholders for the user's well-being metrics, followed by a link to Today's Plan. |
+| [4. To-do List](nudge-prototype/4.png) | Assignments and meetings with checked and unchecked states and a menu beside each item. |
+| [5. Metrics](nudge-prototype/5.png) | Week, Month, and All Time controls, a date range, a short weekly summary, an overview line chart, and a category breakdown. |
+| [6. Today's Plan](nudge-prototype/6.png) | A timeline containing meetings, study, a meal break, exercise, and wind-down time. Below it are a short planning nudge and an Evening Reflection link. |
+| [7. Reflection](nudge-prototype/7.png) | Five mood faces, a yes/no question about completing today's plan, a free-text reflection field, and a Submit button. |
+| [8. Add Plans](nudge-prototype/8.png) | Fields for a title, estimated workload, deadline, and details, followed by an Add button. Workload choices are Easy (less than one week), Medium (less than one month), and Hard (more than one month). |
+| [9. Add Details Reminder](nudge-prototype/9.png) | A reminder sent by Nudge for users who only entered their assignment name without an estimated workload or deadline. |
+| [10. Ask Nudge](nudge-prototype/10.png) | An example conversation about feeling overwhelmed, choosing a first task, and rearranging the evening, with suggested prompts and a message input. |
+| [11. Assignment Action Plan](nudge-prototype/11.png) | An urgent warning page for an assignment nearing its due date. This page explains to the user why this time crunch happened and the next best steps. |
 
 ### The student journey
 
