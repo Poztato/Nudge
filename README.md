@@ -2,8 +2,8 @@
 
 **Team:** Leonard Su, Dewmi Anusha, Lim Lee Khang, Tan Bo Yu  
 **Problem Statement:** Stress & Workload Manager  
-**Video Presentation:** Pending  
-**Prototype Slides:** Pending  
+**Video Presentation:** [YouTube Presentation](https://www.youtube.com/watch?v=EqVEpDxJtYY)  
+**Prototype Slides:** [Canva Prototype with 11 Key Pages](https://canva.link/ttz1gbb1zatj22w)  
 **Figma Ideation Board:** [Mindmap, Problem Tree, and Final Architecture](https://www.figma.com/board/bJGluDSU0T1qYWG7pH7Cy3/AI-Task-Manager-%E2%80%94-Ideation-Journey?node-id=0-1&p=f&t=Rpq8sJP5aY1IzzyN-0)
 
 ## 1. Project Overview
