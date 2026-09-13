@@ -3,9 +3,8 @@
 **Team:** Leonard Su, Dewmi Anusha, Lim Lee Khang, Tan Bo Yu  
 **Problem Statement:** Stress & Workload Manager  
 **Video Presentation:** Pending  
-**Presentation Slides:** Pending
-
-_Phase 1: concept submission. The prototype and presentation are in progress. This README describes the Android app we will build._
+**Prototype Slides:** Pending  
+**Figma Ideation Board:** [Mindmap, Problem Tree, and Final Architecture](https://www.figma.com/board/bJGluDSU0T1qYWG7pH7Cy3/AI-Task-Manager-%E2%80%94-Ideation-Journey?node-id=0-1&p=f&t=Rpq8sJP5aY1IzzyN-0)
 
 ## 1. Project Overview
 
@@ -19,7 +18,9 @@ Existing tools address parts of this problem. [ClickUp](https://help.clickup.com
 
 ### Our Solution
 
-Nudge is an Android personal planning app that connects academic workload with sleep, exercise, and well-being. It uses an on-device AI assistant to suggest priorities, explain workload, and recall useful experiences from the student's diary. The core app works offline after the models are downloaded, with a built-in calendar and an optional Google Calendar connection. Students can start with a task name, add details later, and choose when they want to check in.
+Nudge is an Android personal planning app that connects academic workload with sleep, exercise, and well-being. It uses an on-device AI assistant to suggest priorities, explain workload, and recall useful experiences from the student's diary. The core app works offline after the models are downloaded, with a built-in calendar and an optional Google Calendar connection. Students can start with a task name, add details later, and choose when they want to check in. 
+
+Nudge is designed to be a personal companion for students, helping them balance academic demands with their available time, energy, and well-being. By connecting planning with reflection, it supports realistic next steps when students feel busy or overwhelmed. This makes Nudge more than a task manager: it helps students understand what they can manage and adjust their plans as their circumstances change.
 
 ### Core features
 
@@ -105,7 +106,7 @@ The main design correction from this session is **JSON backup and import for por
 
 ## 3. Design & Prototype
 
-**UI Prototype:** [Eight screen mockups](Nudge%20prototype/) showing the proposed mobile interface. These images demonstrate the layout and example user journey.
+**UI Prototype:** [Eleven screen mockups](nudge-prototype/) showing the proposed mobile interface. These images demonstrate the layout and example user journey.
 
 ### Screens we designed
 
