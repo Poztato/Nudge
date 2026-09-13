@@ -10,7 +10,7 @@
 
 ### The Problem
 
-A student's calendar can look organised while their life feels messy. Typical task managers record classes, work blocks, and assignment deadlines. However, these records leave out poor sleep, unfinished work, postponed exercise, and difficult weeks, which greatly affects how much a student can manage.
+A student's calendar can look organised while their life feels messy. Typical task managers record classes, work blocks, and assignment deadlines. However, these records leave out poor sleep, unfinished work, postponed exercise, and difficult weeks, which greatly affect how much a student can manage.
 
 Students need a way to connect their academic workload with how they are feeling. Knowing that three assignments are due next week is useful. Knowing how much work remains, when it can fit, and what helped during a similar week gives them a clearer next step.
 
@@ -87,7 +87,7 @@ The early design separated raw records, calculated metrics, and personal notes. 
 
 ![High level architecture of the final system](docs/images/high-level-architecture.jpg)
 
-The final architecture of the system shows a simple concept where aspects like tasks, sleep, and exercise and derived into metrics and logged into SQLite. Daily written reflections are stored in a vector database. These records will be retrieved by code and processed by MiniCPM5-1B, which will finally be sent to the user via a plan + explanation + reminder as an Android notification. 
+The final architecture of the system shows a simple concept where aspects like tasks, sleep, and exercise are derived into metrics and logged into SQLite. Daily written reflections are stored in a vector database. These records will be retrieved by code and processed by MiniCPM5-1B, which will finally be sent to the user via a plan + explanation + reminder as an Android notification. 
 
 #### **Final Mindmap, Problem Tree, and Chosen Concept**
 > This board contains the collection of idea brainstorming, rejections and explanations, as well as the final architecture after mentor consultation.  
