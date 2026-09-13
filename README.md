@@ -30,6 +30,7 @@ Nudge is an Android personal planning app that connects academic workload with s
 - **Flexible check-ins and weekly reviews.** Short check-ins run on Tuesday, Friday, and Sunday by default. Sunday brings together progress, difficulties, and next week's priorities. Students can change the schedule or log an update at any time.
 - **A private, searchable diary.** Ask questions such as "What helped the last time I felt overwhelmed by group work?" and retrieve relevant entries, including their original text and dates.
 - **An integrated calendar and local reminders.** Assignments, errands, commitments, and work blocks live in one place. Accepted reminders use Android notifications, so they can arrive while the app is closed.
+- **Portable memory with JSON backup and restore.** Export all personal memory and app records as a JSON file for transfer or back them up directly to the cloud. Import the backup on another device to continue with the same history and preferences.
 
 Consider a student approaching a group-project deadline. They have eight hours of work left and only six available work hours before submission. Nudge shows the time shortfall and retrieves an earlier reflection about how splitting a project into smaller sections helped them get started. It suggests the next section to work on, a suitable work block, and a break. The student reviews the plan and saves the reminder.
 
@@ -87,63 +88,40 @@ The early design separated raw records, calculated metrics, and personal notes. 
 
 | Date | Mentor | Feedback Received | What Was Changed |
 | :--- | :----- | :---------------- | :--------------- |
-|      |        |                   |                  |
+| 10 Sep 2026 | Lim Zi Yang | Add local backup files first, followed by online backup, with automatic cloud backup similar to WhatsApp as a reference. | The prototype design now includes a complete JSON export of personal memory and app records, saved as a transferable file or backed up directly to the cloud. This also inspired a JSON import system so students can restore their history and preferences on another device when they buy a new phone. Local file backup and restore come first, followed by optional cloud backup. |
+| 10 Sep 2026 | Lim Zi Yang | Build a basic, barebones app for the team's own testing of tokens per second (TPS) and architecture. | We will take this into consideration during prototype implementation as a way to measure generation speed and test the architecture before expanding the app. |
+| 10 Sep 2026 | Lim Zi Yang | Install and test the LLM before adding other app features, because it is the foundation of the assistant. | We will take this into consideration during prototype implementation by testing MiniCPM5-1B in isolation before connecting retrieval, planning, and the other features. |
+| 10 Sep 2026 | Lim Zi Yang | Make sure MiniCPM5 supports tool calling. | We had already considered tool calling during planning and selected MiniCPM5-1B as our best-in-class choice in the roughly 1B-parameter open-source weight class for its balance of tool calling and general intelligence, based on OpenBMB's published comparison. Its model card explicitly documents XML-style tool calls. [Model capabilities and comparison](https://huggingface.co/openbmb/MiniCPM5-1B) |
+
+The main design correction from this session is **JSON backup and import for portable memory**. The barebones test app and LLM-first testing sequence are considerations for prototype implementation. The model selection was already part of our planning, as explained in [Why MiniCPM5-1B](#why-minicpm5-1b).
 
 ## 3. Design & Prototype
 
-**UI Prototype:** Pending
+**UI Prototype:** [Eight screen mockups](Nudge%20prototype/) showing the proposed mobile interface. These images demonstrate the layout and example user journey.
 
-The existing web scaffold supplies sample screens and interactions for the Android design. Its records and assistant responses are sample content. The interface has six connected views:
+### Screens we designed
 
-| Screen | Role in the experience |
+The design uses a yellow duck mascot, rounded cards, and a shared bottom navigation bar across the main screens. Three dashboard views show progress, a to-do list, and metrics, with a **Today's Plan** link below each view.
+
+| Screen | What the mockup shows |
 | :--- | :--- |
-| Today | Show priorities, available time, recent observations, and the records behind a suggestion. |
-| Tasks | Add assignments, review missing details, and update progress or remaining effort. |
-| Calendar | See fixed commitments, work blocks, and breaks; review changes before saving them. |
-| Check-in | Record progress, mood or energy, exercise, sleep, and an optional reflection; open the weekly review and WHO-5. |
-| Memory | Search dated reflections and inspect, edit, or remove saved preferences. |
-| Preferences | Set time budgets, exercise and sleep targets, check-in days, and reminder times. |
+| [1. Sign Up](Nudge%20prototype/1.png) | A welcome screen with a language selector, name, email, and password fields, a Next button, and a Sign in link, along with an option to continue offline. |
+| [2. Progress](Nudge%20prototype/2.png) | A dashboard card with a pie chart displaying placeholders for the user's well-being metrics, followed by a link to Today's Plan. |
+| [3. To-do List](Nudge%20prototype/3.png) | Assignments and meetings with checked and unchecked states and a menu beside each item. |
+| [4. Metrics](Nudge%20prototype/4.png) | Week, Month, and All Time controls, a date range, a short weekly summary, an overview line chart, and a category breakdown. |
+| [5. Today's Plan](Nudge%20prototype/5.png) | A timeline containing meetings, study, a meal break, exercise, and wind-down time. Below it are a short planning nudge and an Evening Reflection link. |
+| [6. Reflection](Nudge%20prototype/6.png) | Five mood faces, a yes/no question about completing today's plan, a free-text reflection field, and a Submit button. |
+| [7. Add plans](Nudge%20prototype/7.png) | Fields for a title, estimated workload, deadline, and details, followed by an Add button. Workload choices are Easy (less than one week), Medium (less than one month), and Hard (more than one month). |
+| [8. Ask Nudge](Nudge%20prototype/8.png) | An example conversation about feeling overwhelmed, choosing a first task, and rearranging the evening, with suggested prompts and a message input. |
 
-### First-time setup
+### The student journey
 
-Setup asks for a few details that make the first plan useful:
+The mockups illustrate how a student can move between recording work, reviewing the day, asking for help, and reflecting on progress. **Add plans** captures an assignment or activity. The **To-do List** presents work as a checklist, while **Today's Plan** places academic and personal activities into a daily timeline.
 
-1. **Daily commitment budget:** how many hours the student wants to commit each day, including classes, study, paid work, and other scheduled responsibilities. The app shows how much remains for independent work after fixed commitments.
-2. **Weekly exercise target:** how many minutes the student wants to spend exercising.
-3. **Sleep target:** the student's chosen nightly duration. An optional age range brings up age-based guidance to help them choose it. [Sleep guidance](https://www.cdc.gov/sleep/about/index.html)
-4. **Check-in schedule:** preferred days, reminder time, and quiet hours. The default days are Tuesday, Friday, and Sunday.
+**Ask Nudge** shows the intended tone of the assistant. When the student feels overwhelmed, it suggests a small starting action: review meeting notes for ten minutes before beginning an assignment draft. The conversation also illustrates using a remembered preference for a restful evening when adjusting the plan.
 
-Targets and reminders can be changed later. Students can skip a target and set it when they first use that part of the app.
+The reflection screen closes the loop by asking how the day felt, whether the plan was completed, and what else the student wants to record. The Progress and Metrics views illustrate how the app could bring this history back into an overview.
 
-### Adding and updating an assignment
-
-The student enters an assignment name, then optionally adds a deadline and estimated remaining effort. Effort is measured in working hours, with choices of **under 2 hours**, **2 to under 5 hours**, **5 to 10 hours**, **over 10 hours**, **a custom estimate**, or **Unsure**.
-
-If a range is selected, the app treats it as an uncertain amount of time until the student provides a more specific estimate. Workload calculations show that range. An open-ended estimate such as "over 10 hours" prompts the student to refine it or split the assignment into smaller parts.
-
-Missing deadlines and estimates appear in a **Details needed** list. Nudge brings them into the weekly review and sends a weekly reminder that can be snoozed. A known approaching deadline also brings unresolved details into the Today view. Tasks with missing calculation inputs display "Needs estimate" or "Needs deadline".
-
-As work progresses, the student can mark an assignment as started, update its remaining effort, or mark it completed or cancelled. This keeps the next plan based on the work still left to do.
-
-### Check-ins and the Sunday review
-
-Regular check-ins use short questions:
-
-| Question | Input |
-| :--- | :--- |
-| Did you start, continue, or finish any assignments? | Select tasks and update progress or remaining effort. |
-| How are your mood and energy? | Optional quick ratings. |
-| How much did you exercise? | A duration range or exact minutes for a selected day. |
-| How much did you sleep? | A duration range or exact hours for a selected night. |
-| Anything you want to remember? | Optional free-text reflection. |
-
-Students can log earlier dates or add updates between reminders. Each answer stays attached to its selected date. Summaries show how many days were recorded, and missing days stay visible as gaps. Duration ranges stay as ranges in the resulting metrics.
-
-Sunday adds **"How was your weekend?"** and a weekly review: progress made, difficulties encountered, exercise against the weekly target, sleep observations, and upcoming deadlines. The assistant suggests one practical adjustment for the next week and brings up any missing assignment details.
-
-Every two weeks, Nudge offers the **WHO-5 Well-Being Index**. Its five statements cover how the student has felt over the past two weeks, with responses scored from 0 to 5. The weekly review shows the latest score, its date, and the change from the previous completed assessment. [WHO-5](https://www.who.int/publications/m/item/WHO-UCN-MSD-MHE-2024.01)
-
-_Screen images and the public prototype link are pending._
 
 ## 4. What Makes It Different
 
@@ -284,7 +262,15 @@ We will record each unit's model, RAM, and Android version, then measure cold lo
 
 Android schedules saved reminders, including task nudges, pending-information follow-ups, and check-ins. Reminder records survive app closure and are restored after reboot. The implementation handles notification permissions, quiet hours, and device power-management settings. [Android scheduling documentation](https://developer.android.com/develop/background-work/services/alarms)
 
-Personal records and embeddings stay in app-private storage. Diary retrieval and inference run locally. Export and deletion cover source records, saved profile information, and related vectors. Backup behaviour will be an explicit storage setting. Google Calendar is a separate opt-in connection for calendar data.
+Personal records and embeddings use app-private storage. Diary retrieval and inference run locally. Deletion covers source records, saved profile information, and related vectors. Students control JSON exports and optional cloud backups through storage settings. Google Calendar is a separate opt-in connection for calendar data.
+
+### JSON backup and import
+
+The mentorship session highlighted the need to carry local memory across devices. We will design the prototype so that **all personal memory and app records can be exported as a JSON backup**, including tasks, commitments, progress, check-ins, reflections, WHO-5 assessments, saved preferences, and reminder settings. The backup will preserve record IDs, dates, and source links so the restored profile and history remain connected. Derived metrics and search vectors can be rebuilt from the restored source records.
+
+Local file export and import come first. Students will be able to save the JSON file, transfer it elsewhere, and import it into Nudge on another device. For example, a student buying a new phone can import their backup to restore their history, preferences, and planning records. The import will check the backup format and version before restoring records to SQLite and rebuilding local search and reminders.
+
+The same JSON backup will also support direct cloud backup, followed by optional automatic backups. The mentor suggested a WhatsApp-style Google cloud backup experience as a reference; the provider and backup schedule will be decided during prototype implementation. Cloud backup will be opt-in, and local file backup and restore will work without a cloud account.
 
 ### Build plan & scope
 
@@ -294,6 +280,6 @@ The first build centres on one complete student journey on the **Xiaomi 13T**: c
 2. **Build the records and calculations.** Add setup, tasks, progress updates, manual commitments, pending details, and the five indicators in SQLite.
 3. **Connect memory to planning.** Add the editable profile, source-linked retrieval, schedule checks, and acceptance of suggested changes.
 4. **Complete the routine.** Add local reminders, flexible check-ins, the Sunday review, and WHO-5 every two weeks.
-5. **Demonstrate and test the full flow.** Verify saved data after reopening, offline use after model installation, source-backed answers, and reminder delivery with the app closed and after reboot.
+5. **Add backup and verify the full flow.** Build local JSON export and import, then optional cloud backup. Verify restoration on another device, saved data after reopening, offline use after model installation, source-backed answers, and reminder delivery with the app closed and after reboot.
 
 The remaining phones extend performance and compatibility testing after the primary flow works. Google Calendar, health imports, and after-class questions follow the core build. The prototype and video will show the same student journey, so the submission explains both the problem and how Nudge helps the student take the next step.
