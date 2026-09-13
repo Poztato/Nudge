@@ -282,16 +282,30 @@ The mentorship session highlighted the need to carry local memory across devices
 
 Local file export and import come first. Students will be able to save the JSON file, transfer it elsewhere, and import it into Nudge on another device. For example, a student buying a new phone can import their backup to restore their history, preferences, and planning records. The import will check the backup format and version before restoring records to SQLite and rebuilding local search and reminders.
 
-The same JSON backup will also support direct cloud backup, followed by optional automatic backups. The mentor suggested a WhatsApp-style Google cloud backup experience as a reference; the provider and backup schedule will be decided during prototype implementation. Cloud backup will be opt-in, and local file backup and restore will work without a cloud account.
+Direct cloud backup and automatic backups are stretch goals after local export and import work reliably. The mentor suggested a WhatsApp-style Google cloud backup experience as a reference; the provider and backup schedule will be selected when this extension is developed. Cloud backup will be opt-in, and local file backup and restore will work without a cloud account.
 
 ### Build plan & scope
 
 The first build centres on one complete student journey on the **Xiaomi 13T**: capture an assignment, complete its details, inspect workload, receive a memory-informed suggestion, save a reminder, and review progress.
 
-1. **Run the local models.** Integrate MiniCPM5-1B and EmbeddingGemma with llama.cpp, including structured tool calls and diary retrieval.
-2. **Build the records and calculations.** Add setup, tasks, progress updates, manual commitments, pending details, and the five indicators in SQLite.
-3. **Connect memory to planning.** Add the editable profile, source-linked retrieval, schedule checks, and acceptance of suggested changes.
-4. **Complete the routine.** Add local reminders, flexible check-ins, the Sunday review, and WHO-5 every two weeks.
-5. **Add backup and verify the full flow.** Build local JSON export and import, then optional cloud backup. Verify restoration on another device, saved data after reopening, offline use after model installation, source-backed answers, and reminder delivery with the app closed and after reboot.
+Our proposed schedule is **four weeks**, assuming each of the four members can contribute **12-15 focused hours per week**, or approximately **192-240 team hours** in total. This is a working estimate to align with the confirmed building-phase dates and team availability. We will review it after the first week, when the local runtime and storage integrations have been tested.
 
-The remaining phones extend performance and compatibility testing after the primary flow works. Google Calendar, health imports, and after-class questions follow the core build. The prototype and video will show the same student journey, so the submission explains both the problem and how Nudge helps the student take the next step.
+The proposed division gives one member responsibility for each area: **Android interface and notifications**, **SQLite and calculations**, **local AI and retrieval**, and **UX testing and integration checks**. Members will be assigned to these roles before development, based on their skills and availability. The AI and Android roles work together on native integration, while the testing role prepares example records and checks each milestone as it becomes available.
+
+| Milestone | Estimated window | Lead responsibility | Pass condition |
+| :--- | :--- | :--- | :--- |
+| Prove the local runtime | Week 1 | Local AI, supported by Android | A barebones APK runs MiniCPM5-1B and EmbeddingGemma offline after model installation, retrieves a saved reflection, and returns a tool request that application code can validate. Record response time and peak RAM on the Xiaomi 13T. |
+| Build task capture and records | Week 1, alongside runtime testing | SQLite and Android | A title-only task survives reopening. Adding its deadline and remaining effort updates workload correctly. Example cases cover overlapping commitments, missing inputs, and insufficient available time. |
+| Connect memory to planning | Week 2 | Local AI and SQLite | The assistant retrieves the expected source entry from a fixed set of sample reflections and proposes a work block. Code rejects conflicts, and records change only after the student accepts the proposal. |
+| Complete check-ins, reminders, and backup | Week 3 | Android and SQLite | The five indicators match worked examples. Short check-ins remain separate from two-week WHO-5 assessments. Reminders arrive with the app closed and after reboot, with permission granted. JSON export and import preserve source records and rebuild search and reminders. |
+| Verify the student journey and prepare the demo | Week 4 | UX testing, supported by all members | Complete the full journey offline, restore a backup on a second device, and resolve failures found during repeated use. Reserve the final week for fixes, usability checks, and presentation preparation. |
+
+### Resources, constraints, and fallback plan
+
+The build will use existing development equipment and the available Android phones, with the Xiaomi 13T as the primary development and demo device. The core architecture needs no hosted inference service or database subscription. The main resource commitment is development and testing time, especially for native llama.cpp integration, SQLite packaging, and Android reminders. Model downloads require approximately **966 MB**, plus space for the APK, temporary downloads, and personal records. Distribution bandwidth, maintenance, and any future cloud-backup service remain separate costs.
+
+Local inference is the main technical uncertainty. Our initial usability target is a short planning suggestion within **30 seconds in at least nine of ten warm runs** on the Xiaomi 13T. If response time or memory use is too high, we will shorten the supplied context and response, use non-thinking mode for routine requests, and unload the embedding model before generation. We will then repeat the same scenarios to check both speed and answer quality.
+
+If the assistant still fails that target, we will prioritise the reliable task, metric, and reminder flow while continuing local-model testing. Code can display the calculated time shortfall, and the student can choose a work block manually. Any demonstration will identify which AI features have passed testing. Invalid tool calls or conflicting plans will be rejected without changing saved records.
+
+**Stretch goals** are cloud backup, Google Calendar, health imports, and after-class follow-up questions. They begin only after the core journey and local backup pass their checks. The remaining phones extend performance and compatibility coverage after the Xiaomi 13T flow works. If time becomes limited, we will defer these extensions and additional device coverage to protect the complete core journey and its testing time.
